@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'home_screen.dart';
 
 void main() {
-  runApp(const RozayConnect());
+  runApp(const RozayConnectApp());
 }
 
-class RozayConnect extends StatelessWidget {
-  const RozayConnect({super.key});
+class RozayConnectApp extends StatelessWidget {
+  const RozayConnectApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,34 +14,10 @@ class RozayConnect extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Rozay Connect',
       theme: ThemeData(
-        colorSchemeSeed: Colors.teal,
+        primarySwatch: Colors.green,
         useMaterial3: true,
       ),
-      home: const HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Rozay Connect'),
-        backgroundColor: Colors.teal,
-        foregroundColor: Colors.white,
-      ),
-      body: const Center(
-        child: Text(
-          'Welcome to Rozay Connect!',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      home: const HomeScreen(),
     );
   }
 }
