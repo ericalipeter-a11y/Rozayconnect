@@ -31,8 +31,20 @@ flutter build apk --release
 ```
 The APK is created at `build/app/outputs/flutter-apk/app-release.apk`.
 
+## Important prototype limitations
+Seller-created listings are stored only on the device where they were created, using local app storage. They are not uploaded, shared with other users, or synchronised across devices. Clearing app data or uninstalling the app may remove them. Seller details are not registered or verified by a server, and product photos are not uploaded.
+
+The catalogue includes demonstration products. They are not confirmed offers from real sellers. Payments, checkout, orders, buyer accounts, and seller accounts are not implemented.
+
 ## Before a public launch
-This repository currently uses local demonstration product data. A production launch still needs a secure backend and database, persistent seller registration and verification, authentication, a secure backend/database, image uploads/storage, server-saved product listings, moderation/reporting, privacy policy and terms, and end-to-end testing. The current seller centre is a non-persistent prototype: entries disappear when the app closes. Payments and order management are not implemented and must not be advertised as available until built and tested.
+- Connect a secure online backend and shared database for products and seller profiles.
+- Add secure buyer and seller authentication with role-based access.
+- Add seller verification and safe account recovery.
+- Add product image upload and secure storage.
+- Add moderation, product reporting, and abuse prevention.
+- Publish a privacy policy and terms of service that accurately describe data collection and use.
+- Add order and payment flows only after secure integration and testing.
+- Complete end-to-end testing, accessibility checks, and release monitoring.
 
 ## Roadmap
 - Connect a secure online marketplace API and shared database so listings sync across users and devices.
