@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'seller_portal_screen.dart';
+import 'auth_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MarketplaceProduct {
   const MarketplaceProduct({
@@ -195,6 +197,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _openSellerPortal() async {
+    if (Supabase.instance.client.auth.currentUser == null) {
+      final signedIn = await Navigator.of(context).push<bool>(MaterialPageRoute(builder: (_) => const AuthScreen()));
+      if (signedIn != true || !mounted) return;
+    }
     final product = await Navigator.of(context).push<MarketplaceProduct>(
       MaterialPageRoute(builder: (_) => const SellerPortalScreen()),
     );
