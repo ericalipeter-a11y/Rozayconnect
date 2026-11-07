@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'seller_portal_screen.dart';
 
 class MarketplaceProduct {
   const MarketplaceProduct({
@@ -42,12 +43,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final List<MarketplaceProduct> _products = [...demoProducts];
   final TextEditingController _searchController = TextEditingController();
   String _selectedCategory = 'All';
   String _searchQuery = '';
 
   List<MarketplaceProduct> get _visibleProducts {
-    return demoProducts.where((product) {
+    return _products.where((product) {
       final matchesCategory = _selectedCategory == 'All' ||
           product.category == _selectedCategory;
       final query = _searchQuery.trim().toLowerCase();
@@ -123,12 +125,39 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future<void> _openSellerPortal() async {
+    final product = await Navigator.of(context).push<MarketplaceProduct>(
+      MaterialPageRoute(builder: (_) => const SellerPortalScreen()),
+    );
+    if (product != null && mounted) {
+      setState(() {
+        _products.insert(0, product);
+        _selectedCategory = 'All';
+        _searchQuery = '';
+        _searchController.clear();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Your product was added to this demo catalogue.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final products = _visibleProducts;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F8F6),
       appBar: AppBar(
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: TextButton.icon(
+              onPressed: _openSellerPortal,
+              icon: const Icon(Icons.storefront_outlined),
+              label: const Text('Sell'),
+            ),
+          ),
+        ],
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         titleSpacing: 20,

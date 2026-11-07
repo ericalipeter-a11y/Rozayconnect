@@ -26,6 +26,16 @@ void main() {
     expect(find.text('Classic Leather Sneakers'), findsNothing);
   });
 
+  testWidgets('seller centre opens from the Sell button', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+    await tester.tap(find.text('Sell'));
+    await tester.pumpAndSettle();
+    expect(find.text('Seller centre'), findsOneWidget);
+    expect(find.text('Start selling on Rozay Connect'), findsOneWidget);
+    expect(find.text('Business or seller name'), findsOneWidget);
+    expect(find.text('1. Seller details'), findsOneWidget);
+  });
+
   testWidgets('clearing search restores catalogue', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
     await tester.enterText(find.byType(TextField), 'not-a-product');
