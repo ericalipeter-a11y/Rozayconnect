@@ -26,6 +26,40 @@ class _SellerPortalScreenState extends State<SellerPortalScreen> {
   File? _productImage;
   bool _profileSaved = false;
   bool _busy = false;
+  String? _verificationStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExistingProfile();
+  }
+
+  Future<void> _loadExistingProfile() async {
+    final user = _client.auth.currentUser;
+    if (user == null) return;
+    try {
+      final profile = await _client
+          .from('seller_profiles')
+          .select('business_name,whatsapp_phone,location,verification_status')
+          .eq('id', user.id)
+          .maybeSingle();
+      if (!mounted || profile == null) return;
+      final status = profile['verification_status'] as String? ?? 'pending';
+      setState(() {
+        _business.text = profile['business_name'] as String? ?? '';
+        _phone.text = profile['whatsapp_phone'] as String? ?? '';
+        _location.text = profile['location'] as String? ?? '';
+        _verificationStatus = status;
+        // Rejected sellers may correct their details and submit again.
+        _profileSaved = status != 'rejected';
+      });
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not load your saved seller profile.')),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -114,7 +148,12 @@ class _SellerPortalScreenState extends State<SellerPortalScreen> {
         'location': _location.text.trim(),
         'verification_status': 'pending',
       });
-      if (mounted) setState(() => _profileSaved = true);
+      if (mounted) {
+        setState(() {
+          _profileSaved = true;
+          _verificationStatus = 'pending';
+        });
+      }
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -243,7 +282,7 @@ class _SellerPortalScreenState extends State<SellerPortalScreen> {
                       color: Color(0xFF16834A),
                     ),
                     title: Text('Seller profile submitted'),
-                    subtitle: Text('Verification status: pending'),
+                    subtitle: Text('Verification status: ${_verificationStatus ?? 'pending'}'),
                   ),
                 const SizedBox(height: 22),
                 const Text(
