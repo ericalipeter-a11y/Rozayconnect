@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   quality:
@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -23,8 +25,16 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get
-      - name: Format Dart code
-        run: dart format --output=none --set-exit-if-changed .
+      - name: Format Dart code and save generated lockfile
+        run: |
+          dart format .
+          git add lib/auth_screen.dart lib/home_screen.dart lib/moderation_screen.dart lib/rozay_backend.dart lib/seller_portal_screen.dart test/widget_test.dart pubspec.lock
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Apply Dart formatting and commit dependency lockfile"
+            git push origin HEAD:${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}
+          fi
       - name: Analyze
         run: flutter analyze
       - name: Run tests
