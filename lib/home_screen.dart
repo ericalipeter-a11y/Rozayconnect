@@ -16,6 +16,7 @@ class MarketplaceProduct {
     required this.description,
     required this.emoji,
     this.phone,
+    this.imagePath,
   });
 
   final String name;
@@ -25,6 +26,7 @@ class MarketplaceProduct {
   final String description;
   final String emoji;
   final String? phone;
+  final String? imagePath;
 
   Map<String, dynamic> toJson() => {
         'name': name,
@@ -34,6 +36,7 @@ class MarketplaceProduct {
         'description': description,
         'emoji': emoji,
         'phone': phone,
+        'imagePath': imagePath,
       };
 
   factory MarketplaceProduct.fromJson(Map<String, dynamic> json) =>
@@ -45,6 +48,7 @@ class MarketplaceProduct {
         description: json['description'] as String,
         emoji: json['emoji'] as String? ?? '🛍️',
         phone: json['phone'] as String?,
+        imagePath: json['imagePath'] as String?,
       );
 }
 
@@ -87,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final rows = await Supabase.instance.client
           .from('products')
-          .select('id,name,description,price_ngn,category,seller_profiles!inner(business_name,whatsapp_phone)')
+          .select('id,name,description,price_ngn,category,image_path,seller_profiles!inner(business_name,whatsapp_phone)')
           .eq('status', 'active')
           .order('created_at', ascending: false);
       final online = rows.map((row) {
@@ -101,6 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
           description: row['description'] as String,
           emoji: '🛍️',
           phone: seller['whatsapp_phone'] as String?,
+          imagePath: row['image_path'] as String?,
         );
       }).toList();
       if (!mounted) return;
@@ -169,6 +174,24 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  Widget _productImage(MarketplaceProduct product, {double emojiSize = 48}) {
+    final path = product.imagePath;
+    if (path == null || path.isEmpty) {
+      return Center(child: Text(product.emoji, style: TextStyle(fontSize: emojiSize)));
+    }
+    final url = Supabase.instance.client.storage
+        .from('product-images')
+        .getPublicUrl(path);
+    return Image.network(
+      url,
+      fit: BoxFit.cover,
+      width: double.infinity,
+      errorBuilder: (_, __, ___) => Center(
+        child: Text(product.emoji, style: TextStyle(fontSize: emojiSize)),
+      ),
+    );
+  }
+
   Future<void> _contactSeller(MarketplaceProduct product) async {
     final phone = product.phone?.replaceAll(RegExp(r'[^0-9]'), '') ?? '';
     if (phone.isEmpty) {
@@ -199,7 +222,10 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(child: Text(product.emoji, style: const TextStyle(fontSize: 64))),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: SizedBox(height: 190, width: double.infinity, child: _productImage(product, emojiSize: 64)),
+            ),
             const SizedBox(height: 16),
             Text(product.name, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 6),
@@ -413,7 +439,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Container(
                                     width: double.infinity,
                                     decoration: BoxDecoration(color: const Color(0xFFEAF4ED), borderRadius: BorderRadius.circular(13)),
-                                    child: Center(child: Text(product.emoji, style: const TextStyle(fontSize: 48))),
+                                    child: _productImage(product),
                                   ),
                                 ),
                                 const SizedBox(height: 10),
