@@ -17,4 +17,7 @@ jobs:
       - run: dart format lib test
       - run: flutter analyze
       - run: flutter test
+      # This repository currently contains Flutter app code but no Android
+      # platform scaffold. Generate it in CI before producing the APK.
+      - run: flutter create --platforms=android --org com.rozayconnect --project-name rozay_connect .
       - run: flutter build apk --release
