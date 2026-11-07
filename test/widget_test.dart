@@ -33,8 +33,7 @@ void main() {
     expect(find.text('Seller centre'), findsOneWidget);
     expect(find.text('Start selling on Rozay Connect'), findsOneWidget);
     expect(find.text('Business or seller name'), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('Add product to marketplace'), 300, scrollable: find.byType(Scrollable).last);
-    expect(find.text('Add product to marketplace'), findsOneWidget);
+    expect(find.text('1. Seller details'), findsOneWidget);
   });
 
   testWidgets('clearing search restores catalogue', (tester) async {
