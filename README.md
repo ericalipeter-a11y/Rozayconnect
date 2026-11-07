@@ -1,56 +1,71 @@
 # Rozay Connect
 
-Rozay Connect is a Flutter marketplace starter that helps buyers discover products and connect with sellers.
+Rozay Connect is a Flutter marketplace project for discovering products and connecting buyers with sellers through direct WhatsApp contact.
 
-## Current features
-- Seller centre prototype with seller details and product listing form.
-- Save seller-created product listings on the current device so they remain after the app is closed.
-- Responsive green-and-white marketplace home screen.
-- Search products by name, category, or seller.
-- Filter the catalogue by category.
-- Product detail sheet with price, description, category, and seller.
-- WhatsApp contact action only when a real seller phone number is configured.
-- Clearly labelled demonstration listings; no shared fake seller phone number.
+## Implemented
+
+- Flutter marketplace catalogue with product search and category filters.
+- Email/password authentication through Supabase Auth.
+- Seller profile submission with pending, verified, and rejected states.
+- Product submissions with NGN pricing, descriptions, categories, and optional photos.
+- Product image uploads to the Supabase Storage `product-images` bucket.
+- Public catalogue reads restricted to active products from verified sellers.
+- Moderator review queue for seller profiles and product submissions.
+- Server-side moderation through the `moderate-marketplace` Supabase Edge Function.
+- GitHub Actions checks for Dart formatting, Flutter analysis, tests, and Android release builds.
+
+## Technology
+
+- Flutter / Dart
+- Supabase Auth, PostgreSQL, Row Level Security, Storage, and Edge Functions
+- GitHub Actions
 
 ## Run locally
-1. Install the Flutter stable SDK.
-2. Clone this repository.
-3. Run flutter pub get.
-4. Run flutter run.
 
-## Verify
-    dart format --output=none --set-exit-if-changed .
-    flutter analyze
-    flutter test
+1. Install the current stable Flutter SDK and Android tooling.
+2. Clone this repository and enter the project directory.
+3. Run `flutter pub get`.
+4. Run `flutter run` on an Android device or emulator.
 
-## Build Android APK
-    flutter build apk --release
+The app's Supabase project URL and publishable key are configured in `lib/main.dart`. A publishable key is intended for client applications; never add a Supabase secret/service-role key to Flutter code.
 
-The APK is created at build/app/outputs/flutter-apk/app-release.apk.
+## Quality checks
 
-## Important prototype limitations
-Seller-created listings are stored only on the device where they were created, using local app storage. They are not uploaded, shared with other users, or synchronised across devices. Clearing app data or uninstalling the app may remove them. Seller details are not registered or verified by a server, and product photos are not uploaded.
+Run these commands before submitting changes:
 
-The catalogue includes demonstration products. They are not confirmed offers from real sellers. Payments, checkout, orders, buyer accounts, and seller accounts are not implemented.
+```sh
+dart format --output=none --set-exit-if-changed .
+flutter analyze
+flutter test
+flutter build apk --release
+```
 
-## Supabase database foundation
-An initial PostgreSQL schema with row-level security policies is available at supabase/migrations/20261107010000_initial_marketplace_schema.sql. Setup instructions are in docs/SUPABASE_SETUP.md.
+GitHub Actions runs formatting, static analysis, automated tests, and an Android release APK build on pull requests.
 
-This is a database foundation only. No live Supabase project is configured, and the Flutter app is not connected to it yet. New sellers and products remain pending until a trusted moderation process approves them.
+## Backend and security model
 
-## Before a public launch
-- Configure a Supabase project and connect the Flutter app securely.
-- Add secure buyer and seller authentication with role-based access.
-- Add a trusted seller and listing moderation workflow.
-- Add product image upload and secure storage.
-- Add product reporting, moderation, and abuse prevention.
-- Publish a privacy policy and terms of service that accurately describe data collection and use.
-- Add order and payment flows only after secure integration and testing.
-- Complete end-to-end testing, accessibility checks, and release monitoring.
+The SQL files in `supabase/migrations/` currently contain incremental table-privilege, Row Level Security policy, and Storage bucket/policy changes. **They are not a complete from-scratch database schema.** The base `seller_profiles` and `products` table definitions and any required constraints must be exported from and reviewed against the intended Supabase project before a new environment can be provisioned. See [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md).
 
-## Roadmap
-- Connect the Flutter app to the shared Supabase database so listings sync across users and devices.
-- Add buyer and seller accounts with role-based access.
-- Add seller dashboards, verified listings, and product images.
-- Add favourites, cart, orders, and optional payment integration.
-- Add moderation, reporting, analytics, and release monitoring.
+The app uses:
+
+- Supabase Auth for account registration and sign-in.
+- Row Level Security to restrict seller records to their owner and public product visibility to approved listings.
+- Pending-by-default seller profiles and product submissions.
+- A trusted moderator Edge Function. Moderator privileges are read from trusted Auth `app_metadata.role` claims, not user-editable metadata.
+- A public-read image bucket with authenticated uploads restricted to the owner's UUID folder.
+
+The deployed moderation function requires a valid JWT. A trusted project administrator must assign `moderator` or `admin` in Auth app metadata to a reviewer account. The mobile app must never be given a service-role or secret key.
+
+## Current scope and limitations
+
+- This is an active development project, not a production-certified marketplace.
+- Real-world seller onboarding and moderator approval still require end-to-end testing with separate accounts.
+- The Android app's Supabase connection depends on the test environment's DNS and internet access.
+- Checkout, payments, order fulfilment, refunds, and dispute handling are not implemented.
+- The current automated test suite is a small widget-test suite; comprehensive backend integration, security, and device tests remain outstanding.
+- The project has no declared open-source license. Do not assume third parties have permission to reuse or commercially exploit the code.
+- Confirm ownership and permissions for all contributors, dependencies, generated code, and third-party assets before any commercial licensing discussion.
+
+## Repository readiness
+
+See [docs/REPOSITORY_READINESS.md](docs/REPOSITORY_READINESS.md) for the current technical, provenance, and submission-readiness checklist. See [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md) for backend configuration and safe testing guidance.
