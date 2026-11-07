@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'seller_portal_screen.dart';
 import 'auth_screen.dart';
+import 'moderation_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MarketplaceProduct {
@@ -253,6 +254,20 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  bool get _isSignedIn {
+    try {
+      return Supabase.instance.client.auth.currentUser != null;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  void _openModerationQueue() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const ModerationScreen()),
+    );
+  }
+
   Future<void> _openSellerPortal() async {
     var needsSignIn = false;
     try {
@@ -294,6 +309,12 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: const Color(0xFFF5F8F6),
       appBar: AppBar(
         actions: [
+          if (_isSignedIn)
+            IconButton(
+              tooltip: 'Review marketplace submissions',
+              onPressed: _openModerationQueue,
+              icon: const Icon(Icons.fact_check_outlined),
+            ),
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: TextButton.icon(
