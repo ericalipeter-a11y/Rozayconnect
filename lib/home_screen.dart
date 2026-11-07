@@ -232,7 +232,8 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       needsSignIn = Supabase.instance.client.auth.currentUser == null;
     } catch (_) {
-      // Allows isolated widget previews/tests without initializing Supabase.
+      // Fail closed: require account sign-in if auth state cannot be checked.
+      needsSignIn = true;
     }
     if (needsSignIn) {
       final signedIn = await Navigator.of(context).push<bool>(MaterialPageRoute(builder: (_) => const AuthScreen()));
