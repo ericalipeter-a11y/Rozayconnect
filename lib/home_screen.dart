@@ -254,9 +254,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  bool get _isSignedIn {
+  bool get _isModerator {
     try {
-      return Supabase.instance.client.auth.currentUser != null;
+      final user = Supabase.instance.client.auth.currentUser;
+      final role = user?.appMetadata['role'];
+      return role == 'moderator' || role == 'admin';
     } catch (_) {
       return false;
     }
@@ -309,7 +311,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: const Color(0xFFF5F8F6),
       appBar: AppBar(
         actions: [
-          if (_isSignedIn)
+          if (_isModerator)
             IconButton(
               tooltip: 'Review marketplace submissions',
               onPressed: _openModerationQueue,
