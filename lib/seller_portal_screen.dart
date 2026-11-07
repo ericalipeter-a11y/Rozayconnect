@@ -275,14 +275,16 @@ class _SellerPortalScreenState extends State<SellerPortalScreen> {
                     child: Text(_busy ? 'Saving…' : 'Save seller profile'),
                   )
                 else
-                  const ListTile(
+                  ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: Icon(
                       Icons.check_circle,
                       color: Color(0xFF16834A),
                     ),
                     title: Text('Seller profile submitted'),
-                    subtitle: Text('Verification status: ${_verificationStatus ?? 'pending'}'),
+                    subtitle: Text(
+                      'Verification status: ${_verificationStatus ?? 'pending'}',
+                    ),
                   ),
                 const SizedBox(height: 22),
                 const Text(
