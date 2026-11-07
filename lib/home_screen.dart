@@ -6,8 +6,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'seller_portal_screen.dart';
 import 'auth_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'auth_screen.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MarketplaceProduct {
   const MarketplaceProduct({
