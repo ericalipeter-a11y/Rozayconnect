@@ -230,7 +230,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _openSellerPortal() async {
-    if (Supabase.instance.client.auth.currentUser == null) {
+    var needsSignIn = false;
+    try {
+      needsSignIn = Supabase.instance.client.auth.currentUser == null;
+    } catch (_) {
+      // Allows isolated widget previews/tests without initializing Supabase.
+    }
+    if (needsSignIn) {
       final signedIn = await Navigator.of(context).push<bool>(MaterialPageRoute(builder: (_) => const AuthScreen()));
       if (signedIn != true || !mounted) return;
     }
