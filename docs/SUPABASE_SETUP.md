@@ -1,6 +1,8 @@
 # Supabase setup and operations
 
-Rozay Connect is connected to the Supabase project used for development. This guide documents the expected configuration for a separate development or staging environment. Do not apply database changes to a live project without reviewing the migration and confirming the target project.
+The Flutter app is configured with a Supabase project URL and publishable client key in `lib/main.dart`. A publishable key is designed to be included in a client app, but its presence does **not** prove that the project is reachable, that the database schema is correct, or that the Edge Function and Storage policies are deployed. Those runtime checks must be completed against the intended project.
+
+Do not apply database changes to a live project without reviewing the migration and confirming the target project. Prefer a separate development or staging project.
 
 ## Services used
 
@@ -10,13 +12,27 @@ Rozay Connect is connected to the Supabase project used for development. This gu
 - Storage: `product-images`, public read, authenticated writes restricted to the user's UUID folder.
 - Edge Function: `moderate-marketplace`, deployed with JWT verification enabled.
 
+## Important schema prerequisite
+
+The migration files currently in this repository are **incremental hardening/configuration migrations**. They alter privileges and policies on existing tables and configure the image bucket. They do not create the complete base `seller_profiles` and `products` tables, their columns, constraints, indexes, or every original policy.
+
+Therefore, do not run these migrations against an empty project and assume that it creates a working backend. Before provisioning a new development/staging project:
+
+1. Export the current intended project's schema using a trusted Supabase administrative workflow, excluding customer data and secrets.
+2. Review the exported schema and confirm it contains the required tables, columns, constraints, indexes, and baseline policies.
+3. Store a reviewed, reproducible baseline migration in the repository.
+4. Apply the baseline first, then apply the incremental migrations in timestamp order.
+5. Test the complete setup against a disposable staging project before touching production.
+
+The baseline schema export has not yet been committed to this repository.
+
 ## Configure a development project
 
-1. Create or select a Supabase project in the Supabase dashboard.
+1. Create or select a separate development/staging Supabase project.
 2. In Project Settings / API, copy the project URL and publishable key.
-3. Configure those client-safe values in `lib/main.dart` for the development project.
-4. Never put a database password, service-role key, or Supabase secret key in Flutter code, GitHub files, screenshots, or chat.
-5. Apply the SQL migrations in timestamp order to a fresh development database after reviewing them.
+3. Configure those client-safe values in `lib/main.dart` for the development project. Do not commit secret keys.
+4. Review and apply the complete schema baseline, once it has been exported and committed.
+5. Apply the SQL migrations in timestamp order.
 6. Deploy the `moderate-marketplace` Edge Function with JWT verification enabled and its server-side secrets configured in the Supabase project.
 7. Verify the Storage bucket and policies match the migrations.
 
@@ -60,4 +76,4 @@ Do not use real customer data or personal information in test listings. Do not s
 
 ## Important
 
-The existence of a successful Android build does not prove that live authentication, storage, and moderation work on every network or device. Complete the end-to-end checklist in a separate test environment before any public release.
+A successful Android build does not prove that live authentication, storage, and moderation work on every network or device. Complete the end-to-end checklist in a separate test environment before any public release.
