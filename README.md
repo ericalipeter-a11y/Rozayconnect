@@ -4,7 +4,7 @@ Rozay Connect is a Flutter marketplace starter that helps buyers discover produc
 
 ## Current features
 - Seller centre prototype with seller details and product listing form.
-- Add a product to the visible catalogue during the current app session.
+- Save seller-created product listings on the current device so they remain after the app is closed.
 - Responsive green-and-white marketplace home screen.
 - Search products by name, category, or seller.
 - Filter the catalogue by category.
@@ -35,7 +35,7 @@ The APK is created at `build/app/outputs/flutter-apk/app-release.apk`.
 This repository currently uses local demonstration product data. A production launch still needs a secure backend and database, persistent seller registration and verification, authentication, a secure backend/database, image uploads/storage, server-saved product listings, moderation/reporting, privacy policy and terms, and end-to-end testing. The current seller centre is a non-persistent prototype: entries disappear when the app closes. Payments and order management are not implemented and must not be advertised as available until built and tested.
 
 ## Roadmap
-- Connect a secure marketplace API and persistent database.
+- Connect a secure online marketplace API and shared database so listings sync across users and devices.
 - Add buyer and seller accounts with role-based access.
 - Add seller dashboards, verified listings, and product images.
 - Add favourites, cart, orders, and optional payment integration.
