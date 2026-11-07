@@ -54,16 +54,62 @@ class MarketplaceProduct {
 }
 
 const demoProducts = <MarketplaceProduct>[
-  MarketplaceProduct(name: 'Classic Leather Sneakers', price: '₦30,000', category: 'Fashion', seller: 'Rozay Demo Store', description: 'Comfortable everyday sneakers. This is a sample listing for demonstration.', emoji: '👟'),
-  MarketplaceProduct(name: 'Ladies Everyday Handbag', price: '₦18,000', category: 'Fashion', seller: 'Rozay Demo Store', description: 'A stylish everyday handbag. This is a sample listing for demonstration.', emoji: '👜'),
-  MarketplaceProduct(name: 'Smart Watch', price: '₦35,000', category: 'Electronics', seller: 'Rozay Demo Store', description: 'A modern smart watch. This is a sample listing for demonstration.', emoji: '⌚'),
-  MarketplaceProduct(name: 'Android Smartphone', price: '₦150,000', category: 'Phones', seller: 'Rozay Demo Store', description: 'A sample smartphone listing. Confirm specifications with a real seller before purchase.', emoji: '📱'),
-  MarketplaceProduct(name: 'Home Decor Set', price: '₦22,000', category: 'Home', seller: 'Rozay Demo Store', description: 'A decorative home accessory set. This is a sample listing.', emoji: '🪴'),
-  MarketplaceProduct(name: 'Beauty Care Kit', price: '₦12,500', category: 'Beauty', seller: 'Rozay Demo Store', description: 'A sample beauty product listing.', emoji: '🧴'),
+  MarketplaceProduct(
+      name: 'Classic Leather Sneakers',
+      price: '₦30,000',
+      category: 'Fashion',
+      seller: 'Rozay Demo Store',
+      description:
+          'Comfortable everyday sneakers. This is a sample listing for demonstration.',
+      emoji: '👟'),
+  MarketplaceProduct(
+      name: 'Ladies Everyday Handbag',
+      price: '₦18,000',
+      category: 'Fashion',
+      seller: 'Rozay Demo Store',
+      description:
+          'A stylish everyday handbag. This is a sample listing for demonstration.',
+      emoji: '👜'),
+  MarketplaceProduct(
+      name: 'Smart Watch',
+      price: '₦35,000',
+      category: 'Electronics',
+      seller: 'Rozay Demo Store',
+      description:
+          'A modern smart watch. This is a sample listing for demonstration.',
+      emoji: '⌚'),
+  MarketplaceProduct(
+      name: 'Android Smartphone',
+      price: '₦150,000',
+      category: 'Phones',
+      seller: 'Rozay Demo Store',
+      description:
+          'A sample smartphone listing. Confirm specifications with a real seller before purchase.',
+      emoji: '📱'),
+  MarketplaceProduct(
+      name: 'Home Decor Set',
+      price: '₦22,000',
+      category: 'Home',
+      seller: 'Rozay Demo Store',
+      description: 'A decorative home accessory set. This is a sample listing.',
+      emoji: '🪴'),
+  MarketplaceProduct(
+      name: 'Beauty Care Kit',
+      price: '₦12,500',
+      category: 'Beauty',
+      seller: 'Rozay Demo Store',
+      description: 'A sample beauty product listing.',
+      emoji: '🧴'),
 ];
 
 const marketplaceCategories = <String>[
-  'All', 'Fashion', 'Electronics', 'Phones', 'Home', 'Food', 'Beauty',
+  'All',
+  'Fashion',
+  'Electronics',
+  'Phones',
+  'Home',
+  'Food',
+  'Beauty',
 ];
 
 class HomeScreen extends StatefulWidget {
@@ -92,7 +138,8 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final rows = await Supabase.instance.client
           .from('products')
-          .select('id,name,description,price_ngn,category,image_path,seller_profiles!inner(business_name,whatsapp_phone)')
+          .select(
+              'id,name,description,price_ngn,category,image_path,seller_profiles!inner(business_name,whatsapp_phone)')
           .eq('status', 'active')
           .order('created_at', ascending: false);
       final online = rows.map((row) {
@@ -111,7 +158,8 @@ class _HomeScreenState extends State<HomeScreen> {
       }).toList();
       if (!mounted) return;
       setState(() {
-        _products.removeWhere((product) => product.seller != 'Rozay Demo Store');
+        _products
+            .removeWhere((product) => product.seller != 'Rozay Demo Store');
         _products.insertAll(0, online);
       });
     } catch (_) {
@@ -158,8 +206,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<MarketplaceProduct> get _visibleProducts {
     return _products.where((product) {
-      final matchesCategory = _selectedCategory == 'All' ||
-          product.category == _selectedCategory;
+      final matchesCategory =
+          _selectedCategory == 'All' || product.category == _selectedCategory;
       final query = _searchQuery.trim().toLowerCase();
       final matchesSearch = query.isEmpty ||
           product.name.toLowerCase().contains(query) ||
@@ -178,7 +226,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _productImage(MarketplaceProduct product, {double emojiSize = 48}) {
     final path = product.imagePath;
     if (path == null || path.isEmpty) {
-      return Center(child: Text(product.emoji, style: TextStyle(fontSize: emojiSize)));
+      return Center(
+          child: Text(product.emoji, style: TextStyle(fontSize: emojiSize)));
     }
     final url = Supabase.instance.client.storage
         .from('product-images')
@@ -197,7 +246,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final phone = product.phone?.replaceAll(RegExp(r'[^0-9]'), '') ?? '';
     if (phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Seller contact is not available for this sample listing.')),
+        const SnackBar(
+            content: Text(
+                'Seller contact is not available for this sample listing.')),
       );
       return;
     }
@@ -205,9 +256,11 @@ class _HomeScreenState extends State<HomeScreen> {
       'Hello, I saw ${product.name} on Rozay Connect. Is it available?',
     );
     final uri = Uri.parse('https://wa.me/$phone?text=$message');
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication) && mounted) {
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication) &&
+        mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open WhatsApp. Please try again.')),
+        const SnackBar(
+            content: Text('Could not open WhatsApp. Please try again.')),
       );
     }
   }
@@ -225,12 +278,23 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(14),
-              child: SizedBox(height: 190, width: double.infinity, child: _productImage(product, emojiSize: 64)),
+              child: SizedBox(
+                  height: 190,
+                  width: double.infinity,
+                  child: _productImage(product, emojiSize: 64)),
             ),
             const SizedBox(height: 16),
-            Text(product.name, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+            Text(product.name,
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineSmall
+                    ?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 6),
-            Text(product.price, style: const TextStyle(color: Color(0xFF16834A), fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(product.price,
+                style: const TextStyle(
+                    color: Color(0xFF16834A),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             Text(product.description),
             const SizedBox(height: 12),
@@ -279,7 +343,8 @@ class _HomeScreenState extends State<HomeScreen> {
       needsSignIn = true;
     }
     if (needsSignIn) {
-      final signedIn = await Navigator.of(context).push<bool>(MaterialPageRoute(builder: (_) => const AuthScreen()));
+      final signedIn = await Navigator.of(context)
+          .push<bool>(MaterialPageRoute(builder: (_) => const AuthScreen()));
       if (signedIn != true || !mounted) return;
     }
     final product = await Navigator.of(context).push<MarketplaceProduct>(
@@ -334,11 +399,18 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               width: 38,
               height: 38,
-              decoration: BoxDecoration(color: const Color(0xFFE6F4EB), borderRadius: BorderRadius.circular(12)),
-              child: const Icon(Icons.shopping_bag_outlined, color: Color(0xFF16834A)),
+              decoration: BoxDecoration(
+                  color: const Color(0xFFE6F4EB),
+                  borderRadius: BorderRadius.circular(12)),
+              child: const Icon(Icons.shopping_bag_outlined,
+                  color: Color(0xFF16834A)),
             ),
             const SizedBox(width: 10),
-            const Text('Rozay Connect', style: TextStyle(color: Color(0xFF173B2A), fontWeight: FontWeight.w800, fontSize: 20)),
+            const Text('Rozay Connect',
+                style: TextStyle(
+                    color: Color(0xFF173B2A),
+                    fontWeight: FontWeight.w800,
+                    fontSize: 20)),
           ],
         ),
       ),
@@ -349,15 +421,24 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [Color(0xFF12683B), Color(0xFF239657)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                gradient: const LinearGradient(
+                    colors: [Color(0xFF12683B), Color(0xFF239657)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight),
                 borderRadius: BorderRadius.circular(22),
               ),
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('YOUR MARKETPLACE,\nCONNECTED.', style: TextStyle(color: Colors.white, fontSize: 23, height: 1.15, fontWeight: FontWeight.w900)),
+                  Text('YOUR MARKETPLACE,\nCONNECTED.',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 23,
+                          height: 1.15,
+                          fontWeight: FontWeight.w900)),
                   SizedBox(height: 8),
-                  Text('Discover products and connect with sellers.', style: TextStyle(color: Colors.white, fontSize: 14)),
+                  Text('Discover products and connect with sellers.',
+                      style: TextStyle(color: Colors.white, fontSize: 14)),
                 ],
               ),
             ),
@@ -369,22 +450,30 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: InputDecoration(
                 hintText: 'Search products or sellers',
                 prefixIcon: const Icon(Icons.search, color: Color(0xFF16834A)),
-                suffixIcon: _searchQuery.isEmpty ? null : IconButton(
-                  tooltip: 'Clear search',
-                  onPressed: () {
-                    _searchController.clear();
-                    setState(() => _searchQuery = '');
-                  },
-                  icon: const Icon(Icons.close),
-                ),
+                suffixIcon: _searchQuery.isEmpty
+                    ? null
+                    : IconButton(
+                        tooltip: 'Clear search',
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => _searchQuery = '');
+                        },
+                        icon: const Icon(Icons.close),
+                      ),
                 filled: true,
                 fillColor: Colors.white,
                 contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide.none),
               ),
             ),
             const SizedBox(height: 22),
-            const Text('Browse categories', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF193B2A))),
+            const Text('Browse categories',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF193B2A))),
             const SizedBox(height: 12),
             SizedBox(
               height: 42,
@@ -398,10 +487,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   return ChoiceChip(
                     label: Text(category),
                     selected: selected,
-                    onSelected: (_) => setState(() => _selectedCategory = category),
+                    onSelected: (_) =>
+                        setState(() => _selectedCategory = category),
                     selectedColor: const Color(0xFFDDF1E4),
-                    labelStyle: TextStyle(color: selected ? const Color(0xFF12683B) : const Color(0xFF53645A), fontWeight: FontWeight.w600),
-                    side: BorderSide(color: selected ? const Color(0xFF16834A) : const Color(0xFFE1E9E3)),
+                    labelStyle: TextStyle(
+                        color: selected
+                            ? const Color(0xFF12683B)
+                            : const Color(0xFF53645A),
+                        fontWeight: FontWeight.w600),
+                    side: BorderSide(
+                        color: selected
+                            ? const Color(0xFF16834A)
+                            : const Color(0xFFE1E9E3)),
                     backgroundColor: Colors.white,
                     showCheckmark: false,
                   );
@@ -412,22 +509,33 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Featured products', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF193B2A))),
-                Text('${products.length} items', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                const Text('Featured products',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF193B2A))),
+                Text('${products.length} items',
+                    style: const TextStyle(color: Colors.grey, fontSize: 12)),
               ],
             ),
             const SizedBox(height: 12),
             if (products.isEmpty)
               Container(
                 padding: const EdgeInsets.all(28),
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18)),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18)),
                 child: const Column(
                   children: [
                     Icon(Icons.search_off, size: 42, color: Colors.grey),
                     SizedBox(height: 10),
-                    Text('No products found', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text('No products found',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
                     SizedBox(height: 4),
-                    Text('Try another search or choose a different category.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
+                    Text('Try another search or choose a different category.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey)),
                   ],
                 ),
               )
@@ -461,16 +569,34 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Expanded(
                                   child: Container(
                                     width: double.infinity,
-                                    decoration: BoxDecoration(color: const Color(0xFFEAF4ED), borderRadius: BorderRadius.circular(13)),
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xFFEAF4ED),
+                                        borderRadius:
+                                            BorderRadius.circular(13)),
                                     child: _productImage(product),
                                   ),
                                 ),
                                 const SizedBox(height: 10),
-                                Text(product.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                                Text(product.name,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 13)),
                                 const SizedBox(height: 5),
-                                Text(product.price, style: const TextStyle(color: Color(0xFF16834A), fontWeight: FontWeight.w800, fontSize: 15)),
+                                Text(product.price,
+                                    style: const TextStyle(
+                                        color: Color(0xFF16834A),
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 15)),
                                 const SizedBox(height: 4),
-                                Text(product.seller == 'Rozay Demo Store' ? 'Sample listing' : 'Seller listing', style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
+                                Text(
+                                    product.seller == 'Rozay Demo Store'
+                                        ? 'Sample listing'
+                                        : 'Seller listing',
+                                    style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                        fontSize: 11)),
                               ],
                             ),
                           ),
@@ -481,7 +607,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             const SizedBox(height: 20),
-            const Text('Demo catalogue: replace sample listings with verified seller products before launch.', style: TextStyle(color: Colors.grey, fontSize: 12)),
+            const Text(
+                'Demo catalogue: replace sample listings with verified seller products before launch.',
+                style: TextStyle(color: Colors.grey, fontSize: 12)),
           ],
         ),
       ),

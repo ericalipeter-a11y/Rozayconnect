@@ -35,7 +35,9 @@ class _AuthScreenState extends State<AuthScreen> {
         if (!mounted) return;
         if (response.session == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Account created. Check your email to confirm it, then sign in.')),
+            const SnackBar(
+                content: Text(
+                    'Account created. Check your email to confirm it, then sign in.')),
           );
           setState(() => _createAccount = false);
         } else {
@@ -57,7 +59,9 @@ class _AuthScreenState extends State<AuthScreen> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not reach the account service. Check your connection and try again.')),
+          const SnackBar(
+              content: Text(
+                  'Could not reach the account service. Check your connection and try again.')),
         );
       }
     } finally {
@@ -77,39 +81,60 @@ class _AuthScreenState extends State<AuthScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(Icons.storefront, size: 58, color: Color(0xFF16834A)),
+                const Icon(Icons.storefront,
+                    size: 58, color: Color(0xFF16834A)),
                 const SizedBox(height: 16),
                 Text(
                   _createAccount ? 'Create your account' : 'Welcome back',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 8),
-                const Text('Sign in to manage your seller profile and listings.', textAlign: TextAlign.center),
+                const Text(
+                    'Sign in to manage your seller profile and listings.',
+                    textAlign: TextAlign.center),
                 const SizedBox(height: 24),
                 TextFormField(
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   autofillHints: const [AutofillHints.email],
-                  decoration: const InputDecoration(labelText: 'Email address', border: OutlineInputBorder()),
-                  validator: (value) => value == null || !value.contains('@') ? 'Enter a valid email address' : null,
+                  decoration: const InputDecoration(
+                      labelText: 'Email address', border: OutlineInputBorder()),
+                  validator: (value) => value == null || !value.contains('@')
+                      ? 'Enter a valid email address'
+                      : null,
                 ),
                 const SizedBox(height: 14),
                 TextFormField(
                   controller: _password,
                   obscureText: true,
-                  autofillHints: _createAccount ? const [AutofillHints.newPassword] : const [AutofillHints.password],
-                  decoration: const InputDecoration(labelText: 'Password (at least 8 characters)', border: OutlineInputBorder()),
-                  validator: (value) => value == null || value.length < 8 ? 'Use at least 8 characters' : null,
+                  autofillHints: _createAccount
+                      ? const [AutofillHints.newPassword]
+                      : const [AutofillHints.password],
+                  decoration: const InputDecoration(
+                      labelText: 'Password (at least 8 characters)',
+                      border: OutlineInputBorder()),
+                  validator: (value) => value == null || value.length < 8
+                      ? 'Use at least 8 characters'
+                      : null,
                 ),
                 const SizedBox(height: 18),
                 FilledButton(
                   onPressed: _loading ? null : _submit,
-                  child: Text(_loading ? 'Please wait…' : _createAccount ? 'Create account' : 'Sign in'),
+                  child: Text(_loading
+                      ? 'Please wait…'
+                      : _createAccount
+                          ? 'Create account'
+                          : 'Sign in'),
                 ),
                 TextButton(
-                  onPressed: _loading ? null : () => setState(() => _createAccount = !_createAccount),
-                  child: Text(_createAccount ? 'Already have an account? Sign in' : 'New to Rozay Connect? Create account'),
+                  onPressed: _loading
+                      ? null
+                      : () => setState(() => _createAccount = !_createAccount),
+                  child: Text(_createAccount
+                      ? 'Already have an account? Sign in'
+                      : 'New to Rozay Connect? Create account'),
                 ),
               ],
             ),

@@ -33,9 +33,8 @@ class _ModerationScreenState extends State<ModerationScreen> {
         body: {'action': 'list'},
       );
       if (response.status != 200) {
-        final message = response.data is Map
-            ? response.data['error']?.toString()
-            : null;
+        final message =
+            response.data is Map ? response.data['error']?.toString() : null;
         throw Exception(message ?? 'Could not load review queue.');
       }
       final data = Map<String, dynamic>.from(response.data as Map);
@@ -73,9 +72,8 @@ class _ModerationScreenState extends State<ModerationScreen> {
         },
       );
       if (response.status != 200) {
-        final message = response.data is Map
-            ? response.data['error']?.toString()
-            : null;
+        final message =
+            response.data is Map ? response.data['error']?.toString() : null;
         throw Exception(message ?? 'The review could not be saved.');
       }
       await _loadQueue();
@@ -83,7 +81,9 @@ class _ModerationScreenState extends State<ModerationScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            decision == 'approve' ? 'Submission approved.' : 'Submission rejected.',
+            decision == 'approve'
+                ? 'Submission approved.'
+                : 'Submission rejected.',
           ),
         ),
       );
@@ -140,7 +140,8 @@ class _ModerationScreenState extends State<ModerationScreen> {
             children: [
               Text(
                 seller['business_name']?.toString() ?? 'Seller',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 6),
               Text('Location: ${seller['location'] ?? 'Not provided'}'),
@@ -233,7 +234,8 @@ class _ModerationScreenState extends State<ModerationScreen> {
                         if (_sellers.isEmpty)
                           const Padding(
                             padding: EdgeInsets.symmetric(vertical: 12),
-                            child: Text('No seller profiles waiting for review.'),
+                            child:
+                                Text('No seller profiles waiting for review.'),
                           ),
                         ..._sellers.map(_sellerCard),
                         const SizedBox(height: 20),

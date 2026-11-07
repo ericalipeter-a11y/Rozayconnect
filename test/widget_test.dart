@@ -3,7 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rozay_connect/home_screen.dart';
 
 void main() {
-  testWidgets('shows Rozay Connect marketplace and sample products', (tester) async {
+  testWidgets('shows Rozay Connect marketplace and sample products',
+      (tester) async {
     await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
     expect(find.text('Rozay Connect'), findsOneWidget);
     expect(find.text('Featured products'), findsOneWidget);
@@ -26,7 +27,8 @@ void main() {
     expect(find.text('Classic Leather Sneakers'), findsNothing);
   });
 
-  testWidgets('Sell button requires account sign-in before seller portal', (tester) async {
+  testWidgets('Sell button requires account sign-in before seller portal',
+      (tester) async {
     await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
     await tester.tap(find.text('Sell'));
     await tester.pumpAndSettle();

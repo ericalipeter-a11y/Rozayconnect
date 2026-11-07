@@ -56,7 +56,8 @@ class _SellerPortalScreenState extends State<SellerPortalScreen> {
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not load your saved seller profile.')),
+        const SnackBar(
+            content: Text('Could not load your saved seller profile.')),
       );
     }
   }
@@ -359,8 +360,7 @@ class _SellerPortalScreenState extends State<SellerPortalScreen> {
                 ),
                 const SizedBox(height: 16),
                 OutlinedButton.icon(
-                  onPressed:
-                      _profileSaved && !_busy ? _pickProductImage : null,
+                  onPressed: _profileSaved && !_busy ? _pickProductImage : null,
                   icon: const Icon(Icons.photo_library_outlined),
                   label: Text(
                     _productImage == null
@@ -381,8 +381,7 @@ class _SellerPortalScreenState extends State<SellerPortalScreen> {
                 ],
                 const SizedBox(height: 18),
                 FilledButton(
-                  onPressed:
-                      _profileSaved && !_busy ? _submitProduct : null,
+                  onPressed: _profileSaved && !_busy ? _submitProduct : null,
                   child: Text(
                     _busy ? 'Submitting…' : 'Submit product for review',
                   ),

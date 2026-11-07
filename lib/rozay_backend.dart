@@ -6,7 +6,8 @@ class RozayBackend {
   static Future<List<Map<String, dynamic>>> loadPublicProducts() async {
     final rows = await client
         .from('products')
-        .select('id,name,description,price_ngn,category,image_path,seller_profiles!inner(business_name,whatsapp_phone)')
+        .select(
+            'id,name,description,price_ngn,category,image_path,seller_profiles!inner(business_name,whatsapp_phone)')
         .eq('status', 'active')
         .order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(rows);
