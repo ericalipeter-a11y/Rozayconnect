@@ -44,7 +44,9 @@ GitHub Actions runs formatting, static analysis, automated tests, and an Android
 
 ## Backend and security model
 
-Database definitions are in `supabase/migrations/`. The app uses:
+The SQL files in `supabase/migrations/` currently contain incremental table-privilege, Row Level Security policy, and Storage bucket/policy changes. **They are not a complete from-scratch database schema.** The base `seller_profiles` and `products` table definitions and any required constraints must be exported from and reviewed against the intended Supabase project before a new environment can be provisioned. See [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md).
+
+The app uses:
 
 - Supabase Auth for account registration and sign-in.
 - Row Level Security to restrict seller records to their owner and public product visibility to approved listings.
