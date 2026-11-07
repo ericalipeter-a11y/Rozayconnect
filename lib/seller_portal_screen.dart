@@ -108,7 +108,7 @@ class _SellerPortalScreenState extends State<SellerPortalScreen> {
               const SizedBox(height: 18),
               FilledButton.icon(onPressed: _registered ? _publishProduct : null, icon: const Icon(Icons.add_shopping_cart), label: const Text('Add product to marketplace')),
               const SizedBox(height: 12),
-              const Text('Prototype notice: seller and product details stay in app memory only and disappear when the app is closed. No account is created, no verification is performed, and product photos are not uploaded yet.', style: TextStyle(color: Colors.black54, fontSize: 12)),
+              const Text('Prototype notice: product listings are saved only on this device and are not shared online. No account is created, no verification is performed, and product photos are not uploaded yet.', style: TextStyle(color: Colors.black54, fontSize: 12)),
             ],
           ),
         ),

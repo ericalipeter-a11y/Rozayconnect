@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'seller_portal_screen.dart';
 
@@ -20,6 +23,27 @@ class MarketplaceProduct {
   final String description;
   final String emoji;
   final String? phone;
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'price': price,
+        'category': category,
+        'seller': seller,
+        'description': description,
+        'emoji': emoji,
+        'phone': phone,
+      };
+
+  factory MarketplaceProduct.fromJson(Map<String, dynamic> json) =>
+      MarketplaceProduct(
+        name: json['name'] as String,
+        price: json['price'] as String,
+        category: json['category'] as String,
+        seller: json['seller'] as String,
+        description: json['description'] as String,
+        emoji: json['emoji'] as String? ?? '🛍️',
+        phone: json['phone'] as String?,
+      );
 }
 
 const demoProducts = <MarketplaceProduct>[
@@ -47,6 +71,51 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedCategory = 'All';
   String _searchQuery = '';
+
+  static const _savedProductsKey = 'rozay_connect_seller_products_v1';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedProducts();
+  }
+
+  Future<void> _loadSavedProducts() async {
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      final saved = preferences.getString(_savedProductsKey);
+      if (saved == null || saved.isEmpty) return;
+      final decoded = jsonDecode(saved) as List<dynamic>;
+      final products = decoded
+          .map((item) => MarketplaceProduct.fromJson(
+                Map<String, dynamic>.from(item as Map),
+              ))
+          .toList();
+      if (!mounted) return;
+      setState(() => _products.addAll(products));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Saved listings could not be loaded.')),
+      );
+    }
+  }
+
+  Future<bool> _saveSellerProducts() async {
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      final sellerProducts = _products
+          .where((product) => product.seller != 'Rozay Demo Store')
+          .map((product) => product.toJson())
+          .toList();
+      return await preferences.setString(
+        _savedProductsKey,
+        jsonEncode(sellerProducts),
+      );
+    } catch (_) {
+      return false;
+    }
+  }
 
   List<MarketplaceProduct> get _visibleProducts {
     return _products.where((product) {
@@ -136,8 +205,14 @@ class _HomeScreenState extends State<HomeScreen> {
         _searchQuery = '';
         _searchController.clear();
       });
+      final saved = await _saveSellerProducts();
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Your product was added to this demo catalogue.')),
+        SnackBar(
+          content: Text(saved
+              ? 'Your product is saved on this device.'
+              : 'Product added for this session, but could not be saved.'),
+        ),
       );
     }
   }
@@ -302,7 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(height: 5),
                                 Text(product.price, style: const TextStyle(color: Color(0xFF16834A), fontWeight: FontWeight.w800, fontSize: 15)),
                                 const SizedBox(height: 4),
-                                Text('Sample listing', style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
+                                Text(product.seller == 'Rozay Demo Store' ? 'Sample listing' : 'Seller listing', style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
                               ],
                             ),
                           ),
