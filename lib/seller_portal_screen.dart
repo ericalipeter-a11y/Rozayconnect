@@ -110,7 +110,7 @@ class _SellerPortalScreenState extends State<SellerPortalScreen> {
       const SizedBox(height: 12),
       TextFormField(controller: _price, keyboardType: const TextInputType.numberWithOptions(decimal: true), decoration: _decoration('Price in naira (numbers only)', Icons.payments_outlined), validator: _profileSaved ? (v) => v == null || double.tryParse(v.trim()) == null || double.parse(v.trim()) <= 0 ? 'Enter a valid price' : null : null, enabled: _profileSaved),
       const SizedBox(height: 12),
-      DropdownButtonFormField<String>(value: _category, decoration: _decoration('Category', Icons.category_outlined), items: const ['Fashion','Electronics','Phones','Home','Food','Beauty'].map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(), onChanged: _profileSaved ? (v) => setState(() => _category = v!) : null),
+      DropdownButtonFormField<String>(initialValue: _category, decoration: _decoration('Category', Icons.category_outlined), items: const ['Fashion','Electronics','Phones','Home','Food','Beauty'].map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(), onChanged: _profileSaved ? (v) => setState(() => _category = v!) : null),
       const SizedBox(height: 12),
       TextFormField(controller: _description, maxLines: 3, decoration: _decoration('Product description', Icons.notes_outlined), validator: _profileSaved ? _required : null, enabled: _profileSaved),
       const SizedBox(height: 18),
