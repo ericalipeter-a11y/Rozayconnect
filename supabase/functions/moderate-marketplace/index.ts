@@ -20,13 +20,23 @@ Deno.serve(async (req: Request) => {
   if (!token) return respond({ error: "Sign in is required." }, 401);
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const publishableKeys = Deno.env.get("SUPABASE_PUBLISHABLE_KEYS");
+  const secretKeys = Deno.env.get("SUPABASE_SECRET_KEYS");
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!supabaseUrl || !anonKey || !serviceRoleKey) {
+  let publishableKey: string | undefined;
+  let secretKey: string | undefined;
+  try {
+    publishableKey = publishableKeys ? JSON.parse(publishableKeys).default : anonKey;
+    secretKey = secretKeys ? JSON.parse(secretKeys).default : serviceRoleKey;
+  } catch {
+    return respond({ error: "Moderation service keys are not configured correctly." }, 500);
+  }
+  if (!supabaseUrl || !publishableKey || !secretKey) {
     return respond({ error: "Moderation service is not configured." }, 500);
   }
 
-  const authClient = createClient(supabaseUrl, anonKey, {
+  const authClient = createClient(supabaseUrl, publishableKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
   const { data: authData, error: authError } = await authClient.auth.getUser(token);
@@ -38,7 +48,7 @@ Deno.serve(async (req: Request) => {
     return respond({ error: "You are not authorised to review marketplace submissions." }, 403);
   }
 
-  const admin = createClient(supabaseUrl, serviceRoleKey, {
+  const admin = createClient(supabaseUrl, secretKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
