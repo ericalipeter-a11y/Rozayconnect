@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'home_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: 'https://iqahvpbsmwvrpezgsayr.supabase.co',
+    publishableKey: 'sb_publishable_GhXFFKLhgdpZb0Y4YqOF5w_ODAwwpxW',
+  );
   runApp(const RozayConnectApp());
 }
 
