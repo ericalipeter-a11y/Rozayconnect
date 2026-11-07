@@ -6,6 +6,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'seller_portal_screen.dart';
 import 'auth_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'auth_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MarketplaceProduct {
   const MarketplaceProduct({
@@ -80,6 +82,37 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadSavedProducts();
+    _loadRemoteProducts();
+  }
+
+  Future<void> _loadRemoteProducts() async {
+    try {
+      final rows = await Supabase.instance.client
+          .from('products')
+          .select('id,name,description,price_ngn,category,seller_profiles!inner(business_name,whatsapp_phone)')
+          .eq('status', 'active')
+          .order('created_at', ascending: false);
+      final online = rows.map((row) {
+        final seller = Map<String, dynamic>.from(row['seller_profiles'] as Map);
+        final price = (row['price_ngn'] as num).toStringAsFixed(0);
+        return MarketplaceProduct(
+          name: row['name'] as String,
+          price: '₦$price',
+          category: row['category'] as String,
+          seller: seller['business_name'] as String? ?? 'Verified seller',
+          description: row['description'] as String,
+          emoji: '🛍️',
+          phone: seller['whatsapp_phone'] as String?,
+        );
+      }).toList();
+      if (!mounted) return;
+      setState(() {
+        _products.removeWhere((product) => product.seller != 'Rozay Demo Store');
+        _products.insertAll(0, online);
+      });
+    } catch (_) {
+      // Keep sample listings visible when offline or before approved listings exist.
+    }
   }
 
   Future<void> _loadSavedProducts() async {
