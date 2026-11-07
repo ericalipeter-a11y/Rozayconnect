@@ -13,7 +13,7 @@ class _ModerationScreenState extends State<ModerationScreen> {
   bool _loading = true;
   String? _error;
   List<Map<String, dynamic>> _sellers = [];
-  List<Map<String, dynamic>> _products = {};
+  List<Map<String, dynamic>> _products = [];
   bool _working = false;
 
   @override
