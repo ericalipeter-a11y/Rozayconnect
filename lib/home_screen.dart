@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
           .where((product) => product.seller != 'Rozay Demo Store')
           .map((product) => product.toJson())
           .toList();
-      return preferences.setString(
+      return await preferences.setString(
         _savedProductsKey,
         jsonEncode(sellerProducts),
       );
